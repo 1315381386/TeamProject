@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .release{
+	margin-bottom: 30px;
+	min-height: 400px;
+	width: 500px;
+	margin: 0 auto;
+}
+.control{
+	height: 50px;
+	line-height: 50px;
+}
+textarea{
+	width: 500px;
+	height: 150px;
+	display: block;
+	margin-bottom: 20px;
+}
+ 
+.btnRel{
+	width: 100px;
+	height: 40px;
+	background: #CD5C5C;
+    border: 1px solid #CD5C5C;
+	border-radius: 3px;
+	color: #FFF;
+	float: left;
+}
+.conut{
+	float: right;
+}
+.comment{
+	background: #DCDCDC;
+	width: 460px;
+	min-height: 50px;
+	margin-top:20px;
+	border: 1px solid #C0C0C0;
+	padding: 20px 10px;
+}
+.comment p{
+	min-height: 40px;
+	border-bottom: 1px dashed #F5F5F5;
+	margin-bottom:10px; 
+	
+}
+.comment span.comtxt{
+	display: block;
+	float: left;
+	background: #FFF;
+	line-height: 30px;	
+	padding: 0 5px;
+ 
+	max-width: 320px;
+	overflow: hidden; 
+	text-overflow: ellipsis; 
+	white-space: nowrap; 
+ 
+	
+}
+.comment span.tiems{
+	display: block;
+	float: right;
+	border-radius: 5px;
+	background: #696969;
+	padding: 3px;
+	color: #FFF;
+	line-height: 15px;
+ 
+}
+.comment span.del{
+	width: 15px;
+	height: 15px;
+	display: block;
+	float: right;
+	margin-left: 10px;
+	color: #FFF;
+	cursor: pointer;
+	line-height: 30px;
+}
+
+    </style>
+</head>
+<body>
+    <div id="content">
+		<div class="release">
+			<textarea></textarea>
+			<div class="control">
+				<button class="btnRel" onclick="releaseFn()">
+					发布内容
+				</button> 
+				<div class="conut">
+					共 <span id="count">0</span> 条评论
+				</div>
+			</div>
+			<div class="comment"></div>
+		</div>
+</div>
+
+<script >
+    var txtEle = document.querySelector('textarea');
+    var count = document.getElementById('count');
+    var comEle = document.querySelector('.comment');
+
+    function releaseFn(){
+        var txtVal =  txtEle.value;
+        //console.log(txtVal);
+        txtVal = txtVal.replace(/tmd|sb|\r|\n|\ +/g,'world');
+        if (txtVal == '') {
+            alert("请留下只言片哦")
+        }
+
+        //创建p元素
+        var eleP = document.createElement('p');
+
+         //创建span放value值
+        var eleSpanCon = document.createElement('span');
+        eleSpanCon.className = "comtxt";
+        eleSpanCon.innerHTML = txtVal;
+        eleP.appendChild(eleSpanCon);			
+        txtEle.value ='';			
+
+        //创建删除图片的元素
+        var eleSpanImg = document.createElement('span');
+        eleSpanImg.innerHTML = '<img src="../images/close.jpg" width="15" height="15"/>'
+        eleSpanImg.className = 'del';
+        eleSpanImg.id = 'del';
+        eleP.appendChild(eleSpanImg);
+
+        //创建显示日期的元素
+        var eleSpanTimes = document.createElement('span');
+        var times = new Date();
+        var y = times.getFullYear(),
+             m = times.getMonth() + 1,
+             r = times.getDate();
+        var nowTime = y + '/' + m + '/' + r;
+        eleSpanTimes.innerHTML = nowTime;
+        eleSpanTimes.className = "tiems";
+        eleP.appendChild(eleSpanTimes);
+
+        //将p元素追加到div中 
+        comEle.insertBefore(eleP,comEle.children[0]);
+        num();//调用评论数方法（两处都要用到，就封装成了一个函数，多次使用）
+
+        //为每个关闭小图标添加事件，点击就删除该评论
+        var delEle = document.querySelectorAll('.del');
+        for (var i = 0; i < delEle.length; i++) {
+            delEle[i].onclick = function(){
+                //this.parentNode.style.display="none";
+                this.parentNode.parentNode.removeChild(this.parentNode);
+                //count.innerHTML = numList -= 1
+                num();//删除后 重新获取列表条数 调用评论数方法
+            }
+        }		
+        
+    }
+
+    //获取.comment p的长度，就是获取评论数。发布时调用一下，删除后再调用一次。
+    function num(){
+        var comList = document.querySelectorAll('.comment p');
+        count.innerHTML = comList.length
+    }
+
+</script>
+
+</body>
+</html>
